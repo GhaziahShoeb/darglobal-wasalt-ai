@@ -2,15 +2,15 @@
 
 An institutional AI real estate intelligence platform combining verified public data from **DarGlobal** (London Stock Exchange: `DAR`) and **Wasalt** (Saudi Arabia's REGA-accredited PropTech marketplace).
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/GhaziahShoeb/darglobal-wasalt-ai)
+
 ---
 
-## 🌐 Live Working Deployment
+## 🌐 Live Deployments
 
-- **Public URL**: [https://uncoated-reliance-babble.ngrok-free.dev](https://uncoated-reliance-babble.ngrok-free.dev)
-- **Status**: Live, Hardened Docker Container, Running as Non-Root User, SSL Secured
-- **Healthcheck**: Built-in Docker health probe active (`healthy`)
-
-*(If prompted with the standard free-tier ngrok welcome splash screen, click **"Visit Site"** to access the advisory terminal)*
+- **GitHub Repository**: [https://github.com/GhaziahShoeb/darglobal-wasalt-ai](https://github.com/GhaziahShoeb/darglobal-wasalt-ai)
+- **Live Local Tunnel (Active)**: [https://uncoated-reliance-babble.ngrok-free.dev](https://uncoated-reliance-babble.ngrok-free.dev)
+- **1-Click Permanent Cloud Deploy**: Click the **Deploy to Render** button above to host a 24/7 cloud instance that never sleeps.
 
 ---
 
