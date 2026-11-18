@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  darglobal-wasalt-ai:
+    build: .
+    container_name: darglobal-wasalt-ai
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+    restart: unless-stopped

@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DarGlobal & Wasalt Real Estate Advisory System</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons (Mono outline style) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Marked.js for markdown rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            corporate: {
+              950: '#0B0F19',
+              900: '#111827',
+              850: '#161F32',
+              800: '#1F293D',
+              700: '#334155',
+              600: '#475569',
+              accent: '#C5A880',
+              accentHover: '#D4B996',
+              border: '#28354D'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #0B0F19;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #28354D;
+      border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+    .prose h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #F8FAFC;
+      letter-spacing: -0.01em;
+      margin-top: 0.75rem;
+      margin-bottom: 0.35rem;
+    }
+    .prose h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #CBD5E1;
+      margin-top: 0.6rem;
+      margin-bottom: 0.25rem;
+    }
+    .prose p {
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+      color: #E2E8F0;
+    }
+    .prose ul {
+      list-style-type: square;
+      padding-left: 1.15rem;
+      margin-bottom: 0.5rem;
+      color: #CBD5E1;
+    }
+    .prose li {
+      margin-bottom: 0.25rem;
+    }
+    .prose strong {
+      color: #FFFFFF;
+      font-weight: 600;
+    }
+    .prose a {
+      color: #C5A880;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .prose a:hover {
+      color: #D4B996;
+    }
+    .prose table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.75rem 0;
+      font-size: 0.8rem;
+    }
+    .prose th, .prose td {
+      border: 1px solid #28354D;
+      padding: 0.5rem 0.65rem;
+      text-align: left;
+    }
+    .prose th {
+      background: #161F32;
+      color: #C5A880;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body class="bg-corporate-950 text-slate-200 min-h-screen flex flex-col antialiased">
+
+  <!-- Institutional Top Header -->
+  <header class="border-b border-corporate-border bg-corporate-900/95 sticky top-0 z-40 px-4 lg:px-8 py-3 flex items-center justify-between">
+    <div class="flex items-center space-x-3.5">
+      <div class="w-9 h-9 rounded bg-corporate-800 border border-corporate-700 flex items-center justify-center text-corporate-accent font-semibold text-sm">
+        <i class="fa-solid fa-building-columns"></i>
+      </div>
+      <div>
+        <div class="flex items-center space-x-2">
+          <h1 class="text-sm sm:text-base font-semibold text-white tracking-tight">DarGlobal <span class="text-slate-500 font-normal">|</span> Wasalt</h1>
+          <span class="text-[11px] px-2 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 font-medium">
+            System Operational
+          </span>
+        </div>
+        <p class="text-[11px] text-slate-400">Institutional Real Estate & PropTech Advisory System</p>
+      </div>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="flex items-center space-x-2 sm:space-x-3">
+      <!-- Property Catalog Button -->
+      <button id="toggleCatalogBtn" class="text-xs px-3 py-1.5 rounded bg-corporate-850 hover:bg-corporate-800 border border-corporate-border text-slate-300 transition flex items-center gap-1.5 font-medium">
+        <i class="fa-solid fa-list-check text-slate-400 text-[11px]"></i>
+        <span>Index</span> (<span id="propCount">262</span>)
+      </button>
+
+      <!-- Active Model Indicator -->
+      <div class="hidden md:flex items-center space-x-1.5 text-xs px-2.5 py-1.5 rounded bg-corporate-850 border border-corporate-border text-slate-300">
+        <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+        <span id="activeModelLabel" class="truncate max-w-[170px] text-[11px] font-mono text-slate-300">Google Gemma 4 (Free)</span>
+      </div>
+
+      <!-- Settings Button -->
+      <button id="openSettingsBtn" class="text-xs px-3 py-1.5 rounded bg-corporate-850 hover:bg-corporate-800 border border-corporate-border text-slate-300 transition flex items-center gap-1.5 font-medium">
+        <i class="fa-solid fa-gear text-slate-400 text-[11px]"></i>
+        <span>Configuration</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Work Area -->
+  <main class="flex-1 flex overflow-hidden relative">
+
+    <!-- Primary Chat Interface -->
+    <section class="flex-1 flex flex-col h-[calc(100vh-57px)]">
+      
+      <!-- Thread Messages -->
+      <div id="chatMessages" class="flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-6 space-y-5">
+        
+        <!-- Institutional Briefing Card -->
+        <div class="max-w-3xl mx-auto rounded-lg bg-corporate-900 border border-corporate-border p-5 shadow-sm">
+          <div class="flex items-start justify-between border-b border-corporate-border/80 pb-3 mb-3.5">
+            <div>
+              <h2 class="text-sm font-semibold text-white tracking-tight">Executive Advisory Briefing</h2>
+              <p class="text-xs text-slate-400">Cross-border luxury residential developer and Saudi PropTech integration.</p>
+            </div>
+            <div class="text-right text-[11px] text-slate-400 font-mono">
+              <div>LSE: <span class="text-slate-200 font-medium">DAR</span></div>
+              <div>REGA: <span class="text-slate-200 font-medium">Accredited</span></div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs mb-4">
+            <div class="p-2 rounded bg-corporate-850 border border-corporate-border/60">
+              <div class="text-xs font-semibold text-slate-100">$2.3B+ USD</div>
+              <div class="text-[10px] text-slate-400">Portfolio GDV</div>
+            </div>
+            <div class="p-2 rounded bg-corporate-850 border border-corporate-border/60">
+              <div class="text-xs font-semibold text-slate-100">8 Jurisdictions</div>
+              <div class="text-[10px] text-slate-400">Global Coverage</div>
+            </div>
+            <div class="p-2 rounded bg-corporate-850 border border-corporate-border/60">
+              <div class="text-xs font-semibold text-slate-100">60,000+ Units</div>
+              <div class="text-[10px] text-slate-400">Wasalt Verified Index</div>
+            </div>
+            <div class="p-2 rounded bg-corporate-850 border border-corporate-border/60">
+              <div class="text-xs font-semibold text-slate-100">Infath Digital</div>
+              <div class="text-[10px] text-slate-400">Public Auctions</div>
+            </div>
+          </div>
+
+          <!-- Structured Inquiry Chips -->
+          <div>
+            <div class="text-[11px] font-medium text-slate-400 mb-2">Verified Case References:</div>
+            <div class="flex flex-wrap gap-1.5" id="quickPills">
+              <button class="quick-pill text-[11px] px-2.5 py-1 rounded bg-corporate-850 hover:bg-corporate-800 border border-corporate-border text-slate-300 transition">
+                Trump Tower Jeddah & Wasalt Distribution
+              </button>
+              <button class="quick-pill text-[11px] px-2.5 py-1 rounded bg-corporate-850 hover:bg-corporate-800 border border-corporate-border text-slate-300 transition">
+                AIDA Oman Master Plan & Golden Visa
+              </button>
+              <button class="quick-pill text-[11px] px-2.5 py-1 rounded bg-corporate-850 hover:bg-corporate-800 border border-corporate-border text-slate-300 transition">
+                Tierra Viva Benahavís by Lamborghini
+              </button>
+              <button class="quick-pill text-[11px] px-2.5 py-1 rounded bg-corporate-850 hover:bg-corporate-800 border border-corporate-border text-slate-300 transition">
+                Wasalt Digital Auctions & Infath System
+              </button>
+              <button class="quick-pill text-[11px] px-2.5 py-1 rounded bg-corporate-850 hover:bg-corporate-800 border border-corporate-border text-slate-300 transition">
+                Institutional Comparison: DarGlobal vs Wasalt
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Initial Advisory Message -->
+        <div class="max-w-3xl mx-auto flex items-start gap-3">
+          <div class="w-7 h-7 rounded bg-corporate-800 border border-corporate-700 flex items-center justify-center text-slate-300 text-xs font-semibold flex-shrink-0">
+            AI
+          </div>
+          <div class="flex-1 bg-corporate-900 border border-corporate-border rounded-lg p-4 text-xs leading-relaxed text-slate-200">
+            Welcome to the DarGlobal & Wasalt Real Estate Advisory System. This analytical terminal provides access to verified data regarding prime residential developments across the UAE, Oman, Qatar, Spain, the United Kingdom, and the Kingdom of Saudi Arabia.
+            <br><br>
+            Specify an asset, development class, price requirement, or jurisdictional query to initiate market review.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Suggestions Bar -->
+      <div id="dynamicSuggestions" class="px-4 lg:px-6 py-2 border-t border-corporate-border/60 bg-corporate-900/60 flex gap-1.5 overflow-x-auto text-[11px] hidden">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Input Bar -->
+      <div class="p-3 sm:p-4 border-t border-corporate-border bg-corporate-900">
+        <form id="chatForm" class="max-w-3xl mx-auto relative flex items-center">
+          <input 
+            type="text" 
+            id="chatInput" 
+            maxlength="1000"
+            placeholder="Inquire regarding property assets, pricing, amenities, or platform operations..."
+            autocomplete="off"
+            class="w-full bg-corporate-850 border border-corporate-border rounded px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-corporate-accent pr-24 shadow-sm"
+          />
+          <button 
+            type="submit" 
+            id="sendBtn"
+            class="absolute right-1 px-3.5 py-1.5 bg-corporate-800 hover:bg-corporate-700 border border-corporate-700 text-slate-200 font-medium text-xs rounded transition disabled:opacity-50 flex items-center gap-1.5"
+          >
+            <span>Submit</span>
+            <i class="fa-solid fa-arrow-right text-[10px] text-slate-400"></i>
+          </button>
+        </form>
+        <div class="max-w-3xl mx-auto flex items-center justify-between text-[10px] text-slate-500 mt-2 px-0.5">
+          <span>Enterprise Mode · Deterministic Verification with Free-Tier OpenRouter Support</span>
+          <span>REGA Accredited & LSE Disclosures</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Side Catalog Drawer -->
+    <aside id="catalogDrawer" class="fixed inset-y-0 right-0 z-50 w-full sm:w-[480px] bg-corporate-900 border-l border-corporate-border shadow-2xl transform translate-x-full transition-transform duration-200 ease-out flex flex-col">
+      <div class="p-3.5 border-b border-corporate-border flex items-center justify-between bg-corporate-850">
+        <div>
+          <h3 class="font-semibold text-xs text-white uppercase tracking-wider">Property Intelligence Index</h3>
+          <p class="text-[10px] text-slate-400">DarGlobal International Developments & Wasalt Saudi Listings</p>
+        </div>
+        <button id="closeCatalogBtn" class="w-7 h-7 rounded bg-corporate-800 hover:bg-corporate-700 border border-corporate-border text-slate-400 hover:text-white flex items-center justify-center text-xs">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Filters -->
+      <div class="p-3 border-b border-corporate-border bg-corporate-950/80 space-y-2">
+        <input 
+          type="text" 
+          id="catalogSearch" 
+          placeholder="Filter by title, city, or brand..."
+          class="w-full text-xs bg-corporate-850 border border-corporate-border rounded px-3 py-1.5 text-white placeholder-slate-500 focus:outline-none focus:border-corporate-accent"
+        />
+        <div class="flex gap-2">
+          <select id="catalogSourceFilter" class="flex-1 text-xs bg-corporate-850 border border-corporate-border rounded px-2 py-1.5 text-slate-300">
+            <option value="">All Developers</option>
+            <option value="DarGlobal">DarGlobal (LSE: DAR)</option>
+            <option value="Wasalt">Wasalt (REGA Verified)</option>
+          </select>
+          <select id="catalogCityFilter" class="flex-1 text-xs bg-corporate-850 border border-corporate-border rounded px-2 py-1.5 text-slate-300">
+            <option value="">All Markets</option>
+            <option value="Jeddah">Jeddah</option>
+            <option value="Riyadh">Riyadh</option>
+            <option value="Dubai">Dubai</option>
+            <option value="Muscat">Muscat</option>
+            <option value="Spain">Spain</option>
+            <option value="Dammam">Dammam</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Item List -->
+      <div id="catalogList" class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
+        <!-- Rendered by JS -->
+      </div>
+    </aside>
+
+    <div id="drawerBackdrop" class="fixed inset-0 bg-black/60 z-40 hidden"></div>
+  </main>
+
+  <!-- Configuration Modal -->
+  <div id="settingsModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs hidden">
+    <div class="bg-corporate-900 border border-corporate-border rounded-lg w-full max-w-md p-5 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-3 border-b border-corporate-border">
+        <h3 class="font-semibold text-xs text-white uppercase tracking-wider">System Configuration</h3>
+        <button id="closeSettingsBtn" class="text-slate-400 hover:text-white text-xs">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="py-4 space-y-3.5 text-xs">
+        <div>
+          <label class="block font-medium text-slate-300 mb-1">OpenRouter Model</label>
+          <select id="modelSelect" class="w-full bg-corporate-850 border border-corporate-border rounded px-3 py-1.5 text-white focus:outline-none focus:border-corporate-accent text-xs">
+            <option value="google/gemma-4-31b-it:free">Google Gemma 4 31B (Free)</option>
+            <option value="google/gemma-4-26b-a4b-it:free">Google Gemma 4 26B (Free)</option>
+            <option value="nvidia/nemotron-3.5-lightning:free">NVIDIA Nemotron 3.5 Lightning (Free)</option>
+            <option value="liquid/lfm-3-1.7b:free">Liquid LFM 3 1.7B (Free)</option>
+            <option value="baidu/ernie-5.5-flash-preview:free">Baidu Ernie 5.5 Flash (Free)</option>
+          </select>
+          <p class="text-[10px] text-slate-500 mt-1">Select from open-access analytical models available via OpenRouter.</p>
+        </div>
+
+        <div>
+          <label class="block font-medium text-slate-300 mb-1">OpenRouter API Key (Optional)</label>
+          <input 
+            type="password" 
+            id="apiKeyInput" 
+            placeholder="sk-or-v1-..."
+            maxlength="128"
+            class="w-full bg-corporate-850 border border-corporate-border rounded px-3 py-1.5 text-white placeholder-slate-600 focus:outline-none focus:border-corporate-accent font-mono text-xs"
+          />
+          <p class="text-[10px] text-slate-500 mt-1">
+            Keys are retained locally in browser storage and securely transmitted over HTTPS. If unprovided, the system uses the verified local index.
+          </p>
+        </div>
+
+        <div class="p-2.5 rounded bg-corporate-950 border border-corporate-border text-[10px] text-slate-400 space-y-1 font-mono">
+          <div class="flex justify-between">
+            <span>Container Security:</span>
+            <span class="text-slate-300">Non-Root User (UID 1000)</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Rate Limiter:</span>
+            <span class="text-slate-300">Active (Sliding Window)</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Security Headers:</span>
+            <span class="text-slate-300">CSP / HSTS / Frame Denial</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-3 border-t border-corporate-border flex justify-end gap-2">
+        <button id="saveSettingsBtn" class="px-3.5 py-1.5 rounded bg-corporate-accent hover:bg-corporate-accentHover text-corporate-950 font-semibold text-xs transition">
+          Apply Configuration
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Client Script -->
+  <script>
+    let chatHistory = [];
+    let propertiesData = [];
+    let currentModel = localStorage.getItem('openrouter_model') || 'google/gemma-4-31b-it:free';
+    let userApiKey = localStorage.getItem('openrouter_api_key') || '';
+
+    const chatMessages = document.getElementById('chatMessages');
+    const chatForm = document.getElementById('chatForm');
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const dynamicSuggestions = document.getElementById('dynamicSuggestions');
+    const activeModelLabel = document.getElementById('activeModelLabel');
+
+    const catalogDrawer = document.getElementById('catalogDrawer');
+    const drawerBackdrop = document.getElementById('drawerBackdrop');
+    const toggleCatalogBtn = document.getElementById('toggleCatalogBtn');
+    const closeCatalogBtn = document.getElementById('closeCatalogBtn');
+    const catalogList = document.getElementById('catalogList');
+    const catalogSearch = document.getElementById('catalogSearch');
+    const catalogSourceFilter = document.getElementById('catalogSourceFilter');
+    const catalogCityFilter = document.getElementById('catalogCityFilter');
+    const propCount = document.getElementById('propCount');
+
+    const settingsModal = document.getElementById('settingsModal');
+    const openSettingsBtn = document.getElementById('openSettingsBtn');
+    const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+    const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+    const modelSelect = document.getElementById('modelSelect');
+    const apiKeyInput = document.getElementById('apiKeyInput');
+
+    modelSelect.value = currentModel;
+    apiKeyInput.value = userApiKey;
+    updateModelBadge(currentModel);
+
+    function updateModelBadge(modelId) {
+      const opt = modelSelect.querySelector(`option[value="${modelId}"]`);
+      if (opt) {
+        activeModelLabel.innerText = opt.innerText.split('(')[0].trim();
+      }
+    }
+
+    async function fetchProperties() {
+      try {
+        const res = await fetch('/api/properties?limit=265', {
+          headers: { 'ngrok-skip-browser-warning': 'true' }
+        });
+        const data = await res.json();
+        propertiesData = data.properties || [];
+        propCount.innerText = data.total || propertiesData.length;
+        renderCatalog(propertiesData);
+      } catch (err) {
+        console.error('Failed to retrieve properties:', err);
+      }
+    }
+
+    function renderCatalog(props) {
+      if (!props.length) {
+        catalogList.innerHTML = `<div class="text-center text-xs text-slate-500 py-6 font-mono">No matching records found.</div>`;
+        return;
+      }
+
+      catalogList.innerHTML = props.map(p => `
+        <div class="p-3 rounded bg-corporate-850 border border-corporate-border hover:border-corporate-700 transition">
+          <div class="flex items-center justify-between gap-2 mb-1">
+            <span class="text-[10px] font-medium px-1.5 py-0.5 rounded bg-corporate-800 text-slate-300 border border-corporate-border">
+              ${escapeHtml(p.source)}
+            </span>
+            <span class="text-xs font-semibold text-corporate-accent font-mono">${escapeHtml(p.price_display)}</span>
+          </div>
+          <div class="text-xs font-medium text-white mb-0.5 line-clamp-1">${escapeHtml(p.title)}</div>
+          <div class="text-[10px] text-slate-400 mb-1.5">
+            ${escapeHtml(p.city)}, ${escapeHtml(p.country)} · ${escapeHtml(p.type)}
+          </div>
+          <p class="text-[11px] text-slate-300 line-clamp-2 mb-2 leading-relaxed">${escapeHtml(p.description)}</p>
+          <div class="pt-1.5 border-t border-corporate-border/60 flex items-center justify-between text-[10px]">
+            <span class="text-slate-400">${escapeHtml(p.brand || p.developer)}</span>
+            <a href="${escapeHtml(p.url)}" target="_blank" rel="noopener noreferrer" class="text-corporate-accent hover:underline flex items-center gap-1 font-medium">
+              Source Record <i class="fa-solid fa-arrow-up-right-from-square text-[8px]"></i>
+            </a>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterCatalog() {
+      const q = catalogSearch.value.toLowerCase().trim();
+      const src = catalogSourceFilter.value.toLowerCase();
+      const city = catalogCityFilter.value.toLowerCase();
+
+      const filtered = propertiesData.filter(p => {
+        const matchesQ = !q || p.title.toLowerCase().includes(q) || p.city.toLowerCase().includes(q) || (p.brand && p.brand.toLowerCase().includes(q));
+        const matchesSrc = !src || p.source.toLowerCase() === src;
+        const matchesCity = !city || p.city.toLowerCase().includes(city) || p.country.toLowerCase().includes(city);
+        return matchesQ && matchesSrc && matchesCity;
+      });
+
+      renderCatalog(filtered);
+    }
+
+    catalogSearch.addEventListener('input', filterCatalog);
+    catalogSourceFilter.addEventListener('change', filterCatalog);
+    catalogCityFilter.addEventListener('change', filterCatalog);
+
+    toggleCatalogBtn.addEventListener('click', () => {
+      catalogDrawer.classList.remove('translate-x-full');
+      drawerBackdrop.classList.remove('hidden');
+    });
+
+    const closeDrawer = () => {
+      catalogDrawer.classList.add('translate-x-full');
+      drawerBackdrop.classList.add('hidden');
+    };
+    closeCatalogBtn.addEventListener('click', closeDrawer);
+    drawerBackdrop.addEventListener('click', closeDrawer);
+
+    openSettingsBtn.addEventListener('click', () => settingsModal.classList.remove('hidden'));
+    closeSettingsBtn.addEventListener('click', () => settingsModal.classList.add('hidden'));
+    saveSettingsBtn.addEventListener('click', () => {
+      currentModel = modelSelect.value;
+      userApiKey = apiKeyInput.value.trim();
+      localStorage.setItem('openrouter_model', currentModel);
+      localStorage.setItem('openrouter_api_key', userApiKey);
+      updateModelBadge(currentModel);
+      settingsModal.classList.add('hidden');
+    });
+
+    async function sendMessage(text) {
+      if (!text || !text.trim()) return;
+      const message = text.trim();
+      chatInput.value = '';
+
+      appendMessage('user', message);
+
+      const loadingId = 'load-' + Date.now();
+      appendLoading(loadingId);
+      chatInput.disabled = true;
+      sendBtn.disabled = true;
+
+      try {
+        const payload = {
+          message: message,
+          model: currentModel,
+          api_key: userApiKey || undefined,
+          history: chatHistory.slice(-4)
+        };
+
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'ngrok-skip-browser-warning': 'true'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        removeLoading(loadingId);
+
+        if (res.ok) {
+          appendMessage('assistant', data.response, data.matched_properties, data.model);
+          chatHistory.push({ role: 'user', content: message });
+          chatHistory.push({ role: 'assistant', content: data.response });
+
+          if (data.suggestions && data.suggestions.length) {
+            renderSuggestions(data.suggestions);
+          }
+        } else {
+          appendMessage('assistant', `**Error**: ${data.detail || 'Request could not be processed.'}`);
+        }
+      } catch (err) {
+        removeLoading(loadingId);
+        appendMessage('assistant', `**Network Exception**: Unable to establish secure communication with advisory server.`);
+      } finally {
+        chatInput.disabled = false;
+        sendBtn.disabled = false;
+        chatInput.focus();
+      }
+    }
+
+    function appendMessage(role, text, properties = [], modelName = '') {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'max-w-3xl mx-auto flex items-start gap-3';
+
+      if (role === 'user') {
+        msgDiv.innerHTML = `
+          <div class="flex-1"></div>
+          <div class="bg-corporate-800 border border-corporate-700 text-slate-100 rounded px-3.5 py-2.5 text-xs max-w-[85%] font-medium">
+            ${escapeHtml(text)}
+          </div>
+          <div class="w-7 h-7 rounded bg-corporate-700 text-slate-300 flex items-center justify-center text-[10px] font-semibold flex-shrink-0">
+            USR
+          </div>
+        `;
+      } else {
+        const parsedHtml = marked.parse(text);
+        
+        let propsHtml = '';
+        if (properties && properties.length) {
+          propsHtml = `
+            <div class="mt-3.5 pt-3 border-t border-corporate-border">
+              <div class="text-[10px] font-semibold text-corporate-accent uppercase tracking-wider mb-2">
+                Referenced Asset Records:
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                ${properties.map(p => `
+                  <div class="p-2.5 rounded bg-corporate-950 border border-corporate-border">
+                    <div class="flex items-center justify-between text-[10px] mb-1">
+                      <span class="font-mono font-medium text-corporate-accent">${escapeHtml(p.price_display)}</span>
+                      <span class="px-1 py-0.2 rounded bg-corporate-850 text-slate-400 text-[9px]">${escapeHtml(p.city)}</span>
+                    </div>
+                    <div class="text-xs font-semibold text-white truncate mb-0.5">${escapeHtml(p.title)}</div>
+                    <div class="text-[10px] text-slate-400 line-clamp-1 mb-1.5">${escapeHtml(p.type)} · ${escapeHtml(p.brand || p.developer)}</div>
+                    <a href="${escapeHtml(p.url)}" target="_blank" rel="noopener noreferrer" class="text-[10px] text-corporate-accent hover:underline flex items-center gap-1 font-medium">
+                      Official Disclosure <i class="fa-solid fa-arrow-up-right-from-square text-[8px]"></i>
+                    </a>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        }
+
+        msgDiv.innerHTML = `
+          <div class="w-7 h-7 rounded bg-corporate-800 border border-corporate-700 flex items-center justify-center text-slate-300 text-xs font-semibold flex-shrink-0">
+            AI
+          </div>
+          <div class="flex-1 bg-corporate-900 border border-corporate-border rounded-lg p-4 text-xs text-slate-200">
+            <div class="prose max-w-none">${parsedHtml}</div>
+            ${propsHtml}
+            ${modelName ? `<div class="mt-2 text-[9px] text-slate-500 font-mono">Engine: ${escapeHtml(modelName)}</div>` : ''}
+          </div>
+        `;
+      }
+
+      chatMessages.appendChild(msgDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function appendLoading(id) {
+      const loadDiv = document.createElement('div');
+      loadDiv.id = id;
+      loadDiv.className = 'max-w-3xl mx-auto flex items-start gap-3';
+      loadDiv.innerHTML = `
+        <div class="w-7 h-7 rounded bg-corporate-800 border border-corporate-700 text-slate-400 flex items-center justify-center text-xs flex-shrink-0">
+          <i class="fa-solid fa-circle-notch animate-spin"></i>
+        </div>
+        <div class="bg-corporate-900 border border-corporate-border rounded px-3 py-2 text-xs text-slate-400 font-mono">
+          Querying DarGlobal filings & Wasalt records...
+        </div>
+      `;
+      chatMessages.appendChild(loadDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function removeLoading(id) {
+      const el = document.getElementById(id);
+      if (el) el.remove();
+    }
+
+    function renderSuggestions(suggestions) {
+      if (!suggestions.length) {
+        dynamicSuggestions.classList.add('hidden');
+        return;
+      }
+      dynamicSuggestions.classList.remove('hidden');
+      dynamicSuggestions.innerHTML = suggestions.map(s => `
+        <button class="dynamic-pill whitespace-nowrap px-2.5 py-1 rounded bg-corporate-850 hover:bg-corporate-800 border border-corporate-border text-slate-300 hover:text-white transition flex items-center gap-1.5 font-medium">
+          <span>${escapeHtml(s)}</span>
+        </button>
+      `).join('');
+
+      dynamicSuggestions.querySelectorAll('.dynamic-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+          sendMessage(btn.innerText.trim());
+        });
+      });
+    }
+
+    function escapeHtml(string) {
+      if (!string) return '';
+      const entityMap = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+      return String(string).replace(/[&<>"']/g, s => entityMap[s]);
+    }
+
+    chatForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      sendMessage(chatInput.value);
+    });
+
+    document.querySelectorAll('.quick-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        sendMessage(btn.innerText.trim());
+      });
+    });
+
+    fetchProperties();
+  </script>
+</body>
+</html>
